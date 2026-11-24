@@ -1,0 +1,123 @@
+# =====================================================
+#  zSMedias - creadores.yml
+#  Soporta: &colores, &#RRGGBB y #RRGGBB
+#
+#  Placeholders:
+#   {creator}        nombre del creador
+#   {creator_color}  color hex del creador
+#   {votes}          cantidad de jugadores que lo eligieron
+#   {votes_text}     "usuario eligió" / "usuarios eligieron"
+#   {status}         estado del jugador (ver menu.status)
+#   {player}         jugador (en rewards, mensajes y títulos)
+#
+#  texture: valor "Value" (base64) de la cabeza en minecraft-heads.com.
+#  Si lo dejas vacío o con PEGAR_TEXTURE_AQUI se usa una cabeza normal.
+#  Con /creadores add <id> <nombre> se copia la textura de la cabeza
+#  que tengas en la mano.
+# =====================================================
+
+menu:
+  title: "#FFD000&lC#FFC200&lR#FFB500&lE#FFA800&lA#FF9A00&lD#FF8D00&lO#FF7F00&lR#FF7200&lE#FF6400&lS"
+  rows: 4
+  glow-selected: true
+  filler:
+    enabled: true
+    material: BLACK_STAINED_GLASS_PANE
+    name: " "
+  close-button:
+    enabled: true
+    slot: 31
+    material: BARRIER
+    name: "&c&lCerrar"
+    lore:
+      - "&7Click para cerrar el menú."
+  status:
+    available: "&a▶ Click izquierdo para elegir"
+    selected: "&a✔ Este es tu creador"
+    locked: "&c✖ Ya elegiste a otro creador"
+
+confirm-menu:
+  title: "&8Confirmar creador"
+  rows: 3
+  head-slot: 13
+  filler:
+    enabled: true
+    material: GRAY_STAINED_GLASS_PANE
+    name: " "
+  confirm:
+    slot: 11
+    material: LIME_STAINED_GLASS_PANE
+    name: "&a&l✔ CONFIRMAR"
+    lore:
+      - "&7Elegirás a {creator_color}{creator}&7."
+      - "&cNo podrás cambiarlo después."
+  cancel:
+    slot: 15
+    material: RED_STAINED_GLASS_PANE
+    name: "&c&l✖ CANCELAR"
+    lore:
+      - "&7Volver al menú de creadores."
+
+# =====================================================
+#  Lista de creadores (puedes agregar todos los que quieras)
+# =====================================================
+creators:
+  domix:
+    name: "Domix"
+    color: "#FF4D4D"
+    slot: 12
+    texture: "PEGAR_TEXTURE_AQUI"
+    display-name: "{creator_color}&l{creator}"
+    lore:
+      - "&8Creador de contenido"
+      - " "
+      - "&f{votes} {votes_text} &7a {creator_color}{creator}"
+      - " "
+      - "&7Recompensa al elegir:"
+      - " &8• &f5 Diamantes"
+      - " &8• &f$1,000"
+      - " "
+      - "{status}"
+      - "&eClick derecho &7para ver sus canales"
+    # Links (deja vacío "" los que no use). Click derecho en el menú los envía al chat.
+    links:
+      youtube: "https://youtube.com/@domix"
+      twitch: ""
+      tiktok: ""
+      kick: ""
+    # Comandos que ejecuta la consola al elegir (sin /)
+    rewards:
+      - "give {player} diamond 5"
+      - "eco give {player} 1000"
+    # Opcionales: si los quitas se usan los de messages.yml
+    message:
+      - " "
+      - "&a✔ &fElegiste a #FF4D4D&lDomix &fcomo tu creador."
+      - "&7¡Gracias por apoyar a Domix!"
+      - " "
+    title: "#FF4D4D&lDOMIX"
+    subtitle: "&f¡Gracias por apoyar!"
+
+  ejemplo:
+    name: "Creador Ejemplo"
+    color: "#00C6FF"
+    slot: 14
+    texture: "PEGAR_TEXTURE_AQUI"
+    display-name: "{creator_color}&l{creator}"
+    lore:
+      - "&8Creador de contenido"
+      - " "
+      - "&f{votes} {votes_text} &7a {creator_color}{creator}"
+      - " "
+      - "&7Recompensa al elegir:"
+      - " &8• &f5 Diamantes"
+      - " "
+      - "{status}"
+      - "&eClick derecho &7para ver sus canales"
+    links:
+      youtube: ""
+      twitch: ""
+      tiktok: ""
+      kick: ""
+    rewards:
+      - "give {player} diamond 5"
