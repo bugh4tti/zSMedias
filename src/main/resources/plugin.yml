@@ -1,0 +1,52 @@
+name: zSMedias
+main: com.zs.medias.ZSMedias
+version: 1.0.0
+api-version: '1.16'
+author: Bughatti
+description: Directos, videos, anuncios y menú de creadores.
+softdepend: [PlaceholderAPI]
+
+commands:
+  media:
+    description: Comando principal de zSMedias.
+    aliases: [medias]
+    usage: /media help
+  directo:
+    description: Anuncia un directo en el chat.
+    usage: /directo <kick|twitch|youtube|tiktok> <link>
+  video:
+    description: Anuncia un video en el chat.
+    usage: /video <tiktok|youtube> <link>
+  anuncio:
+    description: Envía un anuncio a toda la modalidad.
+    usage: /anuncio <contenido>
+  creadores:
+    description: Abre el menú de creadores.
+    aliases: [creators]
+    usage: /creadores
+
+permissions:
+  zsmedias.admin:
+    description: Administración de zSMedias (reload, add, remove, reset).
+    default: op
+  zsmedias.directo:
+    description: Usar /directo.
+    default: true
+  zsmedias.video:
+    description: Usar /video.
+    default: true
+  zsmedias.anuncio:
+    description: Usar /anuncio.
+    default: true
+  zsmedias.anuncio.color:
+    description: Usar colores y hex dentro de /anuncio.
+    default: true
+  zsmedias.cooldown.bypass:
+    description: Ignorar todos los cooldowns.
+    default: op
+  zsmedias.creadores:
+    description: Abrir el menú /creadores.
+    default: true
+  zsmedias.creadores.change:
+    description: Cambiar de creador después de elegir.
+    default: op
