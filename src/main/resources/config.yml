@@ -1,0 +1,107 @@
+# =====================================================
+#  zSMedias - config.yml
+#  Autor: Bughatti
+# =====================================================
+
+# Cooldowns en SEGUNDOS.
+# Quien tenga el permiso 'zsmedias.cooldown.bypass' (op por defecto) no tiene cooldown.
+cooldowns:
+  directo: 300      # 5 minutos
+  video: 43200      # 12 horas
+  anuncio: 86400    # 1 día
+
+# ---------------- /directo ----------------
+directo:
+  platforms: [kick, twitch, youtube, tiktok]
+  validate-links: true   # el link debe pertenecer a la plataforma elegida
+
+# ---------------- /video ----------------
+video:
+  platforms: [tiktok, youtube]
+  validate-links: true
+
+# ---------------- /anuncio ----------------
+anuncio:
+  max-length: 120        # largo máximo (sin contar los colores)
+  allow-colors: true     # permite &, &#RRGGBB y #RRGGBB (requiere zsmedias.anuncio.color)
+  blocked-words:
+    - "palabra1"
+    - "palabra2"
+
+# ---------------- Plataformas ----------------
+# name: cómo se muestra | color: hex | domains: dominios válidos del link
+platforms:
+  kick:
+    name: "Kick"
+    color: "#53FC18"
+    domains: ["kick.com"]
+  twitch:
+    name: "Twitch"
+    color: "#9146FF"
+    domains: ["twitch.tv"]
+  youtube:
+    name: "YouTube"
+    color: "#FF0000"
+    domains: ["youtube.com", "youtu.be"]
+  tiktok:
+    name: "TikTok"
+    color: "#00F2EA"
+    domains: ["tiktok.com"]
+
+# ---------------- Sonidos ----------------
+sounds:
+  directo:
+    enabled: true
+    sound: ENTITY_PLAYER_LEVELUP
+    volume: 1.0
+    pitch: 1.0
+  video:
+    enabled: true
+    sound: ENTITY_EXPERIENCE_ORB_PICKUP
+    volume: 1.0
+    pitch: 1.0
+  anuncio:
+    enabled: true
+    sound: BLOCK_NOTE_BLOCK_PLING
+    volume: 1.0
+    pitch: 1.2
+  creadores-click:
+    enabled: true
+    sound: UI_BUTTON_CLICK
+    volume: 1.0
+    pitch: 1.0
+  creadores-elegir:
+    enabled: true
+    sound: ENTITY_PLAYER_LEVELUP
+    volume: 1.0
+    pitch: 1.5
+
+# ---------------- Titles (tiempos en ticks) ----------------
+# Los textos se editan en messages.yml
+titles:
+  directo:
+    enabled: true
+    fade-in: 10
+    stay: 60
+    fade-out: 10
+  video:
+    enabled: true
+    fade-in: 10
+    stay: 60
+    fade-out: 10
+  anuncio:
+    enabled: true
+    fade-in: 10
+    stay: 60
+    fade-out: 10
+  creadores:
+    enabled: true
+    fade-in: 10
+    stay: 70
+    fade-out: 20
+
+# ---------------- Menú /creadores ----------------
+creadores:
+  confirm-menu: true          # muestra un menú de confirmación antes de guardar la elección
+  allow-change: false         # si es false, solo se puede elegir 1 vez
+  # Con allow-change: true, solo cambia quien tenga 'zsmedias.creadores.change'
