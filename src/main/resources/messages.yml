@@ -102,6 +102,9 @@ creadores:
   no-creators: "{prefix}&cTodavía no hay creadores configurados."
   already-chosen: "{prefix}&cYa elegiste a tu creador y no puedes cambiarlo."
   unavailable: "{prefix}&cEse creador ya no está disponible."
+  links-header: "{prefix}&7Canales de {creator_color}&l{creator}&7:"
+  links-line: "  &8» &f{platform}&7: &b{link}"
+  links-none: "{prefix}&7Este creador todavía no agregó sus canales."
   chosen-message:
     - " "
     - "&a✔ &fElegiste a {creator_color}&l{creator} &fcomo tu creador."
