@@ -11,10 +11,22 @@ import org.bukkit.entity.Player;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class AnuncioCommand implements CommandExecutor, TabCompleter {
 
     private static final String TYPE = "anuncio";
+
+    // Dominios con las extensiones más comunes (evita bloquear frases como "hola.como")
+    private static final Pattern URL_PATTERN = Pattern.compile(
+            "(?i)\\b(?:https?://|www\\.)?([a-z0-9-]+(?:\\.[a-z0-9-]+)*\\.(?:com|net|org|gg|xyz|io|me|tv|co|us|es|ar|mx|cl"
+                    + "|club|online|site|fun|lol|cc|ly|to|be|info|app|dev|link|store|pro|top|vip|host|world|mc|network"
+                    + "|ru|br|uk|de|fr))\\b(?::\\d+)?(?:/\\S*)?"
+    );
+
+    // IPs de servidores, con o sin puerto
+    private static final Pattern IP_PATTERN = Pattern.compile("\\b\\d{1,3}(?:\\.\\d{1,3}){3}(?::\\d{1,5})?\\b");
 
     private final ZSMedias plugin;
 
@@ -63,6 +75,13 @@ public class AnuncioCommand implements CommandExecutor, TabCompleter {
             }
         }
 
+        // Anti-spam de links (la consola y quien tenga zsmedias.bypass.links pueden usarlos)
+        boolean linksBypass = player == null || player.hasPermission("zsmedias.bypass.links");
+        if (!linksBypass && plugin.getConfig().getBoolean("anuncio.block-links", true) && hasBlockedLink(visible)) {
+            msg.send(sender, "anuncio.blocked-link");
+            return true;
+        }
+
         boolean bypass = player == null || player.hasPermission("zsmedias.cooldown.bypass");
         if (!bypass) {
             long remaining = plugin.getCooldowns().getRemaining(player.getUniqueId(), TYPE);
@@ -85,10 +104,41 @@ public class AnuncioCommand implements CommandExecutor, TabCompleter {
                 Text.replace(msg.raw("anuncio.subtitle"), "{player}", senderName)
         );
 
+        plugin.getHistory().add(TYPE, senderName, visible);
+        plugin.getLogs().log(TYPE, senderName, visible);
+        plugin.getDiscord().send(TYPE, "{player}", senderName, "{message}", visible);
+
         if (!bypass) {
             plugin.getCooldowns().set(player.getUniqueId(), TYPE, plugin.getConfig().getLong("cooldowns.anuncio", 0));
         }
         return true;
+    }
+
+    /** true si el texto tiene una IP o un dominio que no está en anuncio.allowed-domains. */
+    private boolean hasBlockedLink(String text) {
+        if (IP_PATTERN.matcher(text).find()) {
+            return true;
+        }
+
+        List<String> allowed = plugin.getConfig().getStringList("anuncio.allowed-domains");
+        Matcher matcher = URL_PATTERN.matcher(text);
+        while (matcher.find()) {
+            String host = matcher.group(1).toLowerCase();
+            boolean isAllowed = false;
+
+            for (String domain : allowed) {
+                String d = domain.toLowerCase().trim();
+                if (!d.isEmpty() && (host.equals(d) || host.endsWith("." + d))) {
+                    isAllowed = true;
+                    break;
+                }
+            }
+
+            if (!isAllowed) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
