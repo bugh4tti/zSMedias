@@ -13,7 +13,7 @@ commands:
     usage: /media help
   directo:
     description: Anuncia un directo en el chat.
-    usage: /directo <plataforma> [link]
+    usage: "/directo <plataforma> [link] | /directo execute <plataforma> <nick> [link]"
   video:
     description: Anuncia un video en el chat.
     usage: /video <plataforma> <link>
@@ -32,6 +32,9 @@ permissions:
   zsmedias.directo:
     description: Usar /directo.
     default: true
+  zsmedias.directo.execute:
+    description: Usar /directo execute para anunciar un directo en nombre de otro jugador.
+    default: op
   zsmedias.video:
     description: Usar /video.
     default: true
