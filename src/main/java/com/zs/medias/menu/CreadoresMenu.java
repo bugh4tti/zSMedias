@@ -123,8 +123,9 @@ public class CreadoresMenu implements Listener {
             }
         }
 
+        // El botón de recompensa diaria se oculta si creadores.daily-enabled es false
         holder.claimSlot = -1;
-        if (yml.getBoolean("menu.claim-button.enabled", true)) {
+        if (plugin.getRewards().isDailyEnabled() && yml.getBoolean("menu.claim-button.enabled", true)) {
             int claimSlot = yml.getInt("menu.claim-button.slot", size - 4);
             if (claimSlot >= 0 && claimSlot < size && claimSlot != holder.closeSlot) {
                 holder.claimSlot = claimSlot;
@@ -529,4 +530,4 @@ public class CreadoresMenu implements Listener {
     private int clamp(int value, int min, int max) {
         return Math.max(min, Math.min(max, value));
     }
-                    }
+                                          }
