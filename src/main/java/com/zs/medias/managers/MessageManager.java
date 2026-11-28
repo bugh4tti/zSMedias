@@ -7,10 +7,16 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MessageManager {
+
+    private static final String DEFAULT_LANG = "es";
 
     private final JavaPlugin plugin;
     private FileConfiguration messages;
@@ -19,12 +25,35 @@ public class MessageManager {
         this.plugin = plugin;
     }
 
+    /** Carga lang/messages_<idioma>.yml. Las claves que falten se toman del español incluido en el jar. */
     public void load() {
-        File file = new File(plugin.getDataFolder(), "messages.yml");
+        String lang = plugin.getConfig().getString("language", DEFAULT_LANG).toLowerCase();
+        String resource = "lang/messages_" + lang + ".yml";
+        File file = new File(plugin.getDataFolder(), resource);
+
         if (!file.exists()) {
-            plugin.saveResource("messages.yml", false);
+            if (plugin.getResource(resource) != null) {
+                plugin.saveResource(resource, false);
+            } else {
+                plugin.getLogger().warning("No existe el idioma '" + lang + "'. Usando '" + DEFAULT_LANG + "'.");
+                lang = DEFAULT_LANG;
+                resource = "lang/messages_" + lang + ".yml";
+                file = new File(plugin.getDataFolder(), resource);
+                if (!file.exists()) {
+                    plugin.saveResource(resource, false);
+                }
+            }
         }
+
         messages = YamlConfiguration.loadConfiguration(file);
+
+        try (InputStream in = plugin.getResource("lang/messages_" + DEFAULT_LANG + ".yml")) {
+            if (in != null) {
+                messages.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(in, StandardCharsets.UTF_8)));
+            }
+        } catch (IOException ex) {
+            plugin.getLogger().warning("No se pudieron cargar los mensajes por defecto: " + ex.getMessage());
+        }
     }
 
     private String prefix() {
