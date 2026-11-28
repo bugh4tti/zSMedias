@@ -1,6 +1,6 @@
 name: zSMedias
 main: com.zs.medias.ZSMedias
-version: 1.0.0
+version: 1.1.0
 api-version: '1.16'
 author: Bughatti
 description: Directos, videos, anuncios y menú de creadores.
@@ -13,21 +13,21 @@ commands:
     usage: /media help
   directo:
     description: Anuncia un directo en el chat.
-    usage: /directo <kick|twitch|youtube|tiktok> <link>
+    usage: /directo <plataforma> [link]
   video:
     description: Anuncia un video en el chat.
-    usage: /video <tiktok|youtube> <link>
+    usage: /video <plataforma> <link>
   anuncio:
     description: Envía un anuncio a toda la modalidad.
     usage: /anuncio <contenido>
   creadores:
     description: Abre el menú de creadores.
     aliases: [creators]
-    usage: /creadores
+    usage: /creadores [top|claim]
 
 permissions:
   zsmedias.admin:
-    description: Administración de zSMedias (reload, add, remove, reset).
+    description: Administración de zSMedias (reload, config, add, remove, reset).
     default: op
   zsmedias.directo:
     description: Usar /directo.
@@ -41,11 +41,26 @@ permissions:
   zsmedias.anuncio.color:
     description: Usar colores y hex dentro de /anuncio.
     default: true
+  zsmedias.bypass.links:
+    description: Poner links en /anuncio aunque estén bloqueados.
+    default: op
   zsmedias.cooldown.bypass:
     description: Ignorar todos los cooldowns.
     default: op
+  zsmedias.vincular:
+    description: Vincular canales con /media vincular.
+    default: true
+  zsmedias.toggle:
+    description: Silenciar los anuncios con /media toggle.
+    default: true
+  zsmedias.historial:
+    description: Ver el historial con /media historial.
+    default: op
   zsmedias.creadores:
     description: Abrir el menú /creadores.
+    default: true
+  zsmedias.creadores.claim:
+    description: Reclamar la recompensa diaria con /creadores claim.
     default: true
   zsmedias.creadores.change:
     description: Cambiar de creador después de elegir.
