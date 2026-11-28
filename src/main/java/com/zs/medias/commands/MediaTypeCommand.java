@@ -16,7 +16,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/** Maneja /directo y /video (mismo comportamiento, distinto tipo). */
+/**
+ * Maneja /directo y /video.
+ * /directo <plataforma> [link]  -> sin link usa el canal vinculado con /media vincular
+ * /video <plataforma> <link>
+ */
 public class MediaTypeCommand implements CommandExecutor, TabCompleter {
 
     private final ZSMedias plugin;
@@ -43,7 +47,9 @@ public class MediaTypeCommand implements CommandExecutor, TabCompleter {
 
         List<String> allowed = plugin.getConfig().getStringList(type + ".platforms");
 
-        if (args.length < 2) {
+        // /directo acepta solo la plataforma (usa el canal vinculado); /video siempre necesita link
+        int minArgs = type.equals("directo") ? 1 : 2;
+        if (args.length < minArgs) {
             msg.send(player, type + ".usage", "{platforms}", String.join("|", allowed));
             return true;
         }
@@ -66,16 +72,33 @@ public class MediaTypeCommand implements CommandExecutor, TabCompleter {
         String platformName = platform.getString("name", key);
         String platformColor = platform.getString("color", "#FFFFFF");
 
-        String link = normalizeLink(args[1]);
+        // Link escrito o canal vinculado
+        String link;
+        if (args.length >= 2) {
+            link = normalizeLink(args[1]);
+        } else {
+            String linked = plugin.getData().getChannel(player.getUniqueId(), key);
+            if (linked == null) {
+                msg.send(player, type + ".no-channel", "{platform}", platformName);
+                return true;
+            }
+            link = normalizeLink(linked);
+        }
+
         boolean validate = plugin.getConfig().getBoolean(type + ".validate-links", true);
         if (link == null || (validate && !matchesDomain(link, platform.getStringList("domains")))) {
             msg.send(player, type + ".invalid-link", "{platform}", platformName);
             return true;
         }
 
+        // Cooldown (global o por plataforma)
+        String cooldownKey = plugin.getConfig().getBoolean("cooldowns.per-platform", false)
+                ? type + ":" + key
+                : type;
+
         boolean bypass = player.hasPermission("zsmedias.cooldown.bypass");
         if (!bypass) {
-            long remaining = plugin.getCooldowns().getRemaining(player.getUniqueId(), type);
+            long remaining = plugin.getCooldowns().getRemaining(player.getUniqueId(), cooldownKey);
             if (remaining > 0) {
                 msg.send(player, "general.cooldown", "{time}", Text.formatTime(remaining));
                 return true;
@@ -102,8 +125,19 @@ public class MediaTypeCommand implements CommandExecutor, TabCompleter {
                 Text.replace(msg.raw(type + ".subtitle"), pairs)
         );
 
+        plugin.getLive().showBossBar(Text.replace(msg.raw(type + ".bossbar"), pairs));
+
+        // /directo abre una sesión: recordatorios y bonus de los fans del creador
+        if (type.equals("directo")) {
+            plugin.getLive().startSession(player, platformName, platformColor, link);
+        }
+
+        plugin.getHistory().add(type, player.getName(), platformName + " " + link);
+        plugin.getLogs().log(type, player.getName(), key + " " + link);
+        plugin.getDiscord().send(type, pairs);
+
         if (!bypass) {
-            plugin.getCooldowns().set(player.getUniqueId(), type, plugin.getConfig().getLong("cooldowns." + type, 0));
+            plugin.getCooldowns().set(player.getUniqueId(), cooldownKey, plugin.getConfig().getLong("cooldowns." + type, 0));
         }
         return true;
     }
