@@ -1,5 +1,6 @@
 package com.zs.medias.managers;
 
+import com.zs.medias.ZSMedias;
 import com.zs.medias.util.Text;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -9,7 +10,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,17 +18,21 @@ public class AnnounceManager {
 
     private static final String CENTER_TAG = "[center]";
 
-    private final JavaPlugin plugin;
+    private final ZSMedias plugin;
 
-    public AnnounceManager(JavaPlugin plugin) {
+    public AnnounceManager(ZSMedias plugin) {
         this.plugin = plugin;
     }
 
     private record Line(String plain, BaseComponent[] components) {
     }
 
+    private boolean isMuted(Player player) {
+        return plugin.getData().isMuted(player.getUniqueId());
+    }
+
     /**
-     * Envía un anuncio a todos los jugadores (y a la consola).
+     * Envía un anuncio a todos los jugadores (menos a quienes lo silenciaron) y a la consola.
      * Si la línea contiene {button} y hay link, se reemplaza por un botón clickeable.
      */
     public void broadcast(List<String> rawLines, String buttonText, List<String> hover, String link) {
@@ -87,6 +91,9 @@ public class AnnounceManager {
         }
 
         for (Player player : Bukkit.getOnlinePlayers()) {
+            if (isMuted(player)) {
+                continue;
+            }
             for (Line line : lines) {
                 if (line.components() != null) {
                     player.spigot().sendMessage(line.components());
@@ -101,11 +108,23 @@ public class AnnounceManager {
         }
     }
 
-    /** Sonido + title para todos los jugadores. */
+    /** Sonido + title para todos los jugadores que no silenciaron los anuncios. */
     public void effects(String key, String title, String subtitle) {
         for (Player player : Bukkit.getOnlinePlayers()) {
+            if (isMuted(player)) {
+                continue;
+            }
             playSound(player, key);
             sendTitle(player, key, title, subtitle);
+        }
+    }
+
+    /** Solo sonido, para todos los que no silenciaron los anuncios. */
+    public void soundAll(String key) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (!isMuted(player)) {
+                playSound(player, key);
+            }
         }
     }
 
