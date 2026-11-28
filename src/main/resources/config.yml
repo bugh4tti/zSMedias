@@ -3,12 +3,17 @@
 #  Autor: Bughatti
 # =====================================================
 
+# Idioma de los mensajes: es / en (archivos en plugins/zSMedias/lang/)
+language: es
+
 # Cooldowns en SEGUNDOS.
 # Quien tenga el permiso 'zsmedias.cooldown.bypass' (op por defecto) no tiene cooldown.
 cooldowns:
   directo: 300      # 5 minutos
   video: 43200      # 12 horas
   anuncio: 86400    # 1 día
+  # true = el cooldown de /directo y /video es independiente por plataforma
+  per-platform: false
 
 # ---------------- /directo ----------------
 directo:
@@ -27,32 +32,79 @@ anuncio:
   blocked-words:
     - "palabra1"
     - "palabra2"
+  # Anti-spam: bloquea links, dominios e IPs que no estén en allowed-domains.
+  # Con el permiso 'zsmedias.bypass.links' (op por defecto) se pueden usar igual.
+  block-links: true
+  allowed-domains:
+    - "youtube.com"
+    - "youtu.be"
+    - "twitch.tv"
+    - "kick.com"
+    - "tiktok.com"
 
 # ---------------- Plataformas ----------------
 # name: cómo se muestra | color: hex | domains: dominios válidos del link
+# profile-url: se usa en /media vincular cuando el jugador escribe solo su usuario ({channel})
 platforms:
   kick:
     name: "Kick"
     color: "#53FC18"
     domains: ["kick.com"]
+    profile-url: "https://kick.com/{channel}"
   twitch:
     name: "Twitch"
     color: "#9146FF"
     domains: ["twitch.tv"]
+    profile-url: "https://twitch.tv/{channel}"
   youtube:
     name: "YouTube"
     color: "#FF0000"
     domains: ["youtube.com", "youtu.be"]
+    profile-url: "https://youtube.com/@{channel}"
   tiktok:
     name: "TikTok"
     color: "#00F2EA"
     domains: ["tiktok.com"]
+    profile-url: "https://tiktok.com/@{channel}"
+
+# ---------------- Sesión de directo ----------------
+# Al usar /directo se abre una sesión: mientras dure, se mandan recordatorios
+# y los fans del creador (si es uno de /creadores) reciben su bonus.
+# La sesión termina sola al pasar 'duration' o cuando el streamer se desconecta.
+live:
+  duration: 120          # minutos
+  reminders:
+    enabled: true
+    interval: 15         # cada cuántos minutos se repite el aviso
+    max: 3               # máximo de recordatorios por sesión
+  bossbar:
+    enabled: true        # barra arriba tras /directo y /video
+    duration: 60         # segundos que se muestra
+    color: RED           # BLUE, GREEN, PINK, PURPLE, RED, WHITE, YELLOW
+    style: SOLID         # SOLID, SEGMENTED_6, SEGMENTED_10, SEGMENTED_12, SEGMENTED_20
+
+# ---------------- Bonus para fans durante el directo ----------------
+# El creador se enlaza con 'player:' en creadores.yml.
+# Mientras esté en directo, sus fans conectados ejecutan on-start y, al terminar, on-end.
+# Placeholders: {player} {creator} {multiplier}
+# Ejemplo: "lp user {player} permission settemp coins.multiplier true 3h"
+bonus:
+  live:
+    enabled: true
+    multiplier: 1.5      # también disponible en %zsmedias_creator_bonus%
+    on-start: []
+    on-end: []
 
 # ---------------- Sonidos ----------------
 sounds:
   directo:
     enabled: true
     sound: ENTITY_PLAYER_LEVELUP
+    volume: 1.0
+    pitch: 1.0
+  directo-reminder:
+    enabled: true
+    sound: BLOCK_NOTE_BLOCK_BELL
     volume: 1.0
     pitch: 1.0
   video:
@@ -75,9 +127,19 @@ sounds:
     sound: ENTITY_PLAYER_LEVELUP
     volume: 1.0
     pitch: 1.5
+  creadores-claim:
+    enabled: true
+    sound: ENTITY_EXPERIENCE_ORB_PICKUP
+    volume: 1.0
+    pitch: 1.3
+  creadores-hito:
+    enabled: true
+    sound: UI_TOAST_CHALLENGE_COMPLETE
+    volume: 1.0
+    pitch: 1.0
 
 # ---------------- Titles (tiempos en ticks) ----------------
-# Los textos se editan en messages.yml
+# Los textos se editan en lang/messages_<idioma>.yml
 titles:
   directo:
     enabled: true
@@ -102,6 +164,46 @@ titles:
 
 # ---------------- Menú /creadores ----------------
 creadores:
-  confirm-menu: true          # muestra un menú de confirmación antes de guardar la elección
+  confirm-menu: true          # menú de confirmación antes de guardar la elección
   allow-change: false         # si es false, solo se puede elegir 1 vez
   # Con allow-change: true, solo cambia quien tenga 'zsmedias.creadores.change'
+  daily-cooldown: 86400       # segundos entre cada /creadores claim (24 h)
+  # Tag que devuelve %zsmedias_creator_tag% (cada creador puede tener el suyo en creadores.yml)
+  default-tag: "&8[{creator_color}Fan de {creator}&8]"
+
+# ---------------- Historial (/media historial) ----------------
+history:
+  max-entries: 100
+  page-size: 8
+
+# ---------------- Logs (plugins/zSMedias/logs/usage.log) ----------------
+logs:
+  enabled: true
+
+# ---------------- Webhook de Discord ----------------
+# Placeholders: {player} {platform} {platform_color} {link} {message}
+# Los embeds aceptan markdown de Discord (**negrita**, etc.).
+discord:
+  enabled: false
+  webhook-url: "PEGAR_WEBHOOK_AQUI"
+  username: "zSMedias"
+  avatar-url: ""
+  footer: "zSMedias"
+  directo:
+    enabled: true
+    content: ""            # ej: "@everyone" para mencionar
+    title: "🔴 ¡{player} está en directo!"
+    description: "Entra a verlo en **{platform}**\n{link}"
+    color: "#FF3B3B"
+  video:
+    enabled: true
+    content: ""
+    title: "🎬 ¡{player} subió un nuevo video!"
+    description: "Míralo en **{platform}**\n{link}"
+    color: "#FFD000"
+  anuncio:
+    enabled: true
+    content: ""
+    title: "📢 Anuncio de {player}"
+    description: "{message}"
+    color: "#009809"
