@@ -22,6 +22,11 @@ public class CreatorRewards {
     //  Recompensa diaria
     // =====================================================
 
+    /** Interruptor general: creadores.daily-enabled en config.yml (activado por defecto). */
+    public boolean isDailyEnabled() {
+        return plugin.getConfig().getBoolean("creadores.daily-enabled", true);
+    }
+
     /** Segundos que faltan para poder reclamar de nuevo (0 = disponible). */
     public long dailyRemaining(Player player) {
         if (player.hasPermission("zsmedias.cooldown.bypass")) {
@@ -41,6 +46,11 @@ public class CreatorRewards {
     /** Intenta reclamar la recompensa diaria. Envía los mensajes y devuelve true si se entregó. */
     public boolean claimDaily(Player player) {
         MessageManager msg = plugin.getMessages();
+
+        if (!isDailyEnabled()) {
+            msg.send(player, "creadores.claim-disabled");
+            return false;
+        }
 
         Creator creator = plugin.getCreators().get(plugin.getData().getChoice(player.getUniqueId()));
         if (creator == null) {
