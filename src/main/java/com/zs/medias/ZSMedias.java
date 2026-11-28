@@ -4,11 +4,18 @@ import com.zs.medias.commands.AnuncioCommand;
 import com.zs.medias.commands.CreadoresCommand;
 import com.zs.medias.commands.MediaCommand;
 import com.zs.medias.commands.MediaTypeCommand;
+import com.zs.medias.listeners.PlayerListener;
 import com.zs.medias.managers.AnnounceManager;
 import com.zs.medias.managers.CooldownManager;
 import com.zs.medias.managers.CreatorManager;
+import com.zs.medias.managers.CreatorRewards;
 import com.zs.medias.managers.DataManager;
+import com.zs.medias.managers.DiscordManager;
+import com.zs.medias.managers.HistoryManager;
+import com.zs.medias.managers.LiveManager;
+import com.zs.medias.managers.LogManager;
 import com.zs.medias.managers.MessageManager;
+import com.zs.medias.menu.ConfigMenu;
 import com.zs.medias.menu.CreadoresMenu;
 import com.zs.medias.placeholders.MediaPlaceholders;
 import org.bukkit.Bukkit;
@@ -25,8 +32,14 @@ public class ZSMedias extends JavaPlugin {
     private CreatorManager creators;
     private DataManager data;
     private CooldownManager cooldowns;
+    private HistoryManager history;
+    private LogManager logs;
+    private DiscordManager discord;
     private AnnounceManager announcer;
+    private LiveManager live;
+    private CreatorRewards rewards;
     private CreadoresMenu creadoresMenu;
+    private ConfigMenu configMenu;
 
     @Override
     public void onEnable() {
@@ -46,10 +59,21 @@ public class ZSMedias extends JavaPlugin {
         cooldowns = new CooldownManager(this);
         cooldowns.load();
 
+        history = new HistoryManager(this);
+        history.load();
+
+        logs = new LogManager(this);
+        discord = new DiscordManager(this);
         announcer = new AnnounceManager(this);
+        live = new LiveManager(this);
+        rewards = new CreatorRewards(this);
 
         creadoresMenu = new CreadoresMenu(this);
+        configMenu = new ConfigMenu(this);
+
         getServer().getPluginManager().registerEvents(creadoresMenu, this);
+        getServer().getPluginManager().registerEvents(configMenu, this);
+        getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
 
         register("media", new MediaCommand(this));
         register("directo", new MediaTypeCommand(this, "directo"));
@@ -62,11 +86,17 @@ public class ZSMedias extends JavaPlugin {
             getLogger().info("PlaceholderAPI detectado: placeholders registrados.");
         }
 
+        // Entrega los hitos que ya se hayan alcanzado (por ejemplo, si se agregaron hitos nuevos)
+        rewards.checkAll();
+
         getLogger().info("zSMedias v" + getDescription().getVersion() + " habilitado.");
     }
 
     @Override
     public void onDisable() {
+        if (live != null) {
+            live.shutdown();
+        }
         if (data != null) {
             data.save();
         }
@@ -88,11 +118,13 @@ public class ZSMedias extends JavaPlugin {
         }
     }
 
-    /** Recarga config.yml, messages.yml y creadores.yml. */
+    /** Recarga config.yml, el idioma y creadores.yml. */
     public void reloadAll() {
         reloadConfig();
         messages.load();
         creators.load();
+        rewards.checkAll();
+        creadoresMenu.refreshOpen();
     }
 
     public static ZSMedias getInstance() {
@@ -115,11 +147,35 @@ public class ZSMedias extends JavaPlugin {
         return cooldowns;
     }
 
+    public HistoryManager getHistory() {
+        return history;
+    }
+
+    public LogManager getLogs() {
+        return logs;
+    }
+
+    public DiscordManager getDiscord() {
+        return discord;
+    }
+
     public AnnounceManager getAnnouncer() {
         return announcer;
     }
 
+    public LiveManager getLive() {
+        return live;
+    }
+
+    public CreatorRewards getRewards() {
+        return rewards;
+    }
+
     public CreadoresMenu getCreadoresMenu() {
         return creadoresMenu;
+    }
+
+    public ConfigMenu getConfigMenu() {
+        return configMenu;
     }
 }
