@@ -8,7 +8,8 @@
 #   {votes}          cantidad de jugadores que lo eligieron
 #   {votes_text}     "usuario eligió" / "usuarios eligieron"
 #   {status}         estado del jugador (ver menu.status)
-#   {player}         jugador (en rewards, mensajes y títulos)
+#   {player}         jugador (en rewards, daily, mensajes y títulos)
+#   En los hitos (milestones), {votes} es la cantidad de votos del hito.
 #
 #  texture: valor "Value" (base64) de la cabeza en minecraft-heads.com.
 #  Si lo dejas vacío o con PEGAR_TEXTURE_AQUI se usa una cabeza normal.
@@ -31,6 +32,22 @@ menu:
     name: "&c&lCerrar"
     lore:
       - "&7Click para cerrar el menú."
+  # Recompensa diaria (también con /creadores claim). El cooldown se edita en config.yml
+  claim-button:
+    enabled: true
+    slot: 32
+    material: CHEST
+    name: "&6&lRecompensa diaria"
+    lore:
+      - "&7Reclama una recompensa cada 24 horas"
+      - "&7por apoyar a tu creador."
+      - " "
+      - "{status}"
+    status:
+      ready: "&a▶ Click para reclamar"
+      cooldown: "&c✖ Disponible en &f{time}"
+      no-creator: "&c✖ Elige un creador primero"
+      no-reward: "&c✖ Tu creador no tiene recompensa diaria"
   status:
     available: "&a▶ Click izquierdo para elegir"
     selected: "&a✔ Este es tu creador"
@@ -79,6 +96,11 @@ creators:
       - " "
       - "{status}"
       - "&eClick derecho &7para ver sus canales"
+    # Nick de Minecraft del creador. Sirve para detectar cuando está en directo
+    # y activar el bonus de sus fans (ver 'bonus' en config.yml). Déjalo vacío si no aplica.
+    player: "Domix"
+    # Tag opcional para %zsmedias_creator_tag% (si lo dejas vacío usa creadores.default-tag de config.yml)
+    tag: "&8[#FF4D4D&lFan de Domix&8]"
     # Links (deja vacío "" los que no use). Click derecho en el menú los envía al chat.
     links:
       youtube: "https://youtube.com/@domix"
@@ -89,7 +111,37 @@ creators:
     rewards:
       - "give {player} diamond 5"
       - "eco give {player} 1000"
-    # Opcionales: si los quitas se usan los de messages.yml
+    # Comandos de la recompensa diaria (/creadores claim). Vacío = sin recompensa diaria.
+    daily:
+      - "give {player} gold_ingot 5"
+      - "eco give {player} 250"
+    # Hitos: cuando el creador llega a esa cantidad de votos, TODOS sus fans cobran la recompensa
+    # (los conectados al instante y el resto cuando entren al servidor).
+    milestones:
+      10:
+        message:
+          - " "
+          - "&6&l★ &fHito de {creator_color}&l{creator} &fdesbloqueado: &e{votes} votos&f."
+          - " "
+        rewards:
+          - "give {player} diamond 10"
+      50:
+        message:
+          - " "
+          - "&6&l★ &fHito de {creator_color}&l{creator} &fdesbloqueado: &e{votes} votos&f."
+          - " "
+        rewards:
+          - "give {player} diamond 32"
+          - "eco give {player} 5000"
+      100:
+        message:
+          - " "
+          - "&6&l★ &fHito de {creator_color}&l{creator} &fdesbloqueado: &e{votes} votos&f."
+          - " "
+        rewards:
+          - "give {player} netherite_ingot 4"
+          - "eco give {player} 25000"
+    # Opcionales: si los quitas se usan los de lang/messages_<idioma>.yml
     message:
       - " "
       - "&a✔ &fElegiste a #FF4D4D&lDomix &fcomo tu creador."
@@ -114,6 +166,8 @@ creators:
       - " "
       - "{status}"
       - "&eClick derecho &7para ver sus canales"
+    player: ""
+    tag: ""
     links:
       youtube: ""
       twitch: ""
@@ -121,3 +175,4 @@ creators:
       kick: ""
     rewards:
       - "give {player} diamond 5"
+    daily: []
