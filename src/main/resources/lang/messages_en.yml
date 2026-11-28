@@ -1,0 +1,234 @@
+# =====================================================
+#  zSMedias - lang/messages_en.yml
+#  Supports: &colors, &#RRGGBB and #RRGGBB (e.g. #FDFF00&lM#FEFF2C&lE)
+#  [center] at the start of a line centers it in the chat.
+#  Activate with: language: en (config.yml). Missing keys fall back to Spanish.
+# =====================================================
+
+prefix: "&8[#00C6FF&lzS#00B4F5&lMedias&8] &r"
+
+general:
+  no-permission: "{prefix}&cYou don't have permission to do that."
+  only-players: "{prefix}&cOnly players can use this command."
+  reload: "{prefix}&aConfiguration and language reloaded successfully."
+  cooldown: "{prefix}&cYou must wait &f{time} &cbefore using this command again."
+
+help:
+  - " "
+  - "&8&m                                                  "
+  - "  #00C6FF&lz#00B4F5&lS#00A2EB&lM#0090E1&le#007EDD&ld#006CD3&li#005AC9&la#0048BF&ls"
+  - " "
+  - "  &f/directo &7<platform> [link] &8- &7Announce a live stream."
+  - "  &f/directo execute &7<platform> <nick> [link] &8- &7Announce for another player."
+  - "  &f/video &7<platform> <link> &8- &7Announce a video."
+  - "  &f/anuncio &7<message> &8- &7Global announcement."
+  - "  &f/creadores &8- &7Creators menu."
+  - "  &f/creadores claim &8- &7Daily reward."
+  - "  &f/creadores top &8- &7Creators ranking."
+  - "  &f/media vincular &7[platform] [channel] &8- &7Link your channel."
+  - "  &f/media toggle &8- &7Mute or unmute announcements."
+  - "  &f/media historial &7[page] &8- &7History (staff)."
+  - "  &f/media config &8- &7In-game settings (admin)."
+  - "  &f/media reload &8- &7Reload the configuration."
+  - "&8&m                                                  "
+  - " "
+
+# ---------------- /directo ----------------
+directo:
+  usage: "{prefix}&cUsage: &f/directo <{platforms}> [link]"
+  invalid-platform: "{prefix}&cInvalid platform. Options: &f{platforms}"
+  invalid-link: "{prefix}&cThat link doesn't belong to &f{platform}&c."
+  no-channel: "{prefix}&cYou don't have a &f{platform} &cchannel linked. Use &f/media vincular &cor type the link at the end of the command."
+  execute-usage: "{prefix}&cUsage: &f/directo execute <{platforms}> <nick> [link]"
+  execute-no-channel: "{prefix}&c{player} doesn't have a &f{platform} &cchannel linked. Type the link at the end of the command."
+  execute-done: "{prefix}&aYou announced &f{player}&a's live stream on &f{platform}&a."
+  # {button} is replaced by a clickable button
+  lines:
+    - " "
+    - "[center]&8&m                                                  "
+    - "[center]&c&l● #FF3B3B&lL#FF5B3B&lI#FF7A3B&lV#FF9A3B&lE &8&l» {platform_color}&l{platform_upper}"
+    - " "
+    - "[center]&f&l{player} &7is live now ✦"
+    - "[center]&7Come and show some support!"
+    - " "
+    - "[center]{button}"
+    - "[center]&8&m                                                  "
+    - " "
+  # Automatic reminders while the live session lasts ({time} = time since it started)
+  reminder:
+    lines:
+      - " "
+      - "[center]&8&m                                                  "
+      - "[center]&c&l● &f&l{player} &7is still live on {platform_color}&l{platform} &8(&f{time}&8)"
+      - "[center]&7There's still time to join!"
+      - " "
+      - "[center]{button}"
+      - "[center]&8&m                                                  "
+      - " "
+  button:
+    text: "{platform_color}&l[ ▶ WATCH LIVE ]"
+    hover:
+      - "{platform_color}&l{platform}"
+      - "&7Channel of &f{player}"
+      - " "
+      - "&eClick to open the link!"
+  title: "#FF3B3B&lLIVE NOW!"
+  subtitle: "&f{player} &7on {platform_color}{platform}"
+  bossbar: "&c&l● {platform_color}&l{player} &fis live on {platform_color}&l{platform}"
+
+# ---------------- /video ----------------
+video:
+  usage: "{prefix}&cUsage: &f/video <{platforms}> <link>"
+  invalid-platform: "{prefix}&cInvalid platform. Options: &f{platforms}"
+  invalid-link: "{prefix}&cThat link doesn't belong to &f{platform}&c."
+  lines:
+    - " "
+    - "[center]&8&m                                                  "
+    - "[center]&e&l★ #FFD000&lN#FFC100&lE#FFB100&lW #FFA200&lV#FF9200&lI#FF8300&lD#FF7300&lE#FF6400&lO &8&l» {platform_color}&l{platform_upper}"
+    - " "
+    - "[center]&f&l{player} &7uploaded a new video ✦"
+    - "[center]&7Go watch it and leave a like!"
+    - " "
+    - "[center]{button}"
+    - "[center]&8&m                                                  "
+    - " "
+  button:
+    text: "{platform_color}&l[ ▶ WATCH VIDEO ]"
+    hover:
+      - "{platform_color}&l{platform}"
+      - "&7Video by &f{player}"
+      - " "
+      - "&eClick to open the link!"
+  title: "#FFD000&lNEW VIDEO!"
+  subtitle: "&f{player} &7on {platform_color}{platform}"
+  bossbar: "&e&l★ {platform_color}&l{player} &fuploaded a new video on {platform_color}&l{platform}"
+
+# ---------------- /anuncio ----------------
+anuncio:
+  usage: "{prefix}&cUsage: &f/anuncio <message>"
+  too-long: "{prefix}&cYour announcement is too long. Maximum: &f{max} &ccharacters."
+  blocked-word: "{prefix}&cYour announcement contains forbidden words."
+  blocked-link: "{prefix}&cYou can't include links, domains or IPs in your announcement."
+  lines:
+    - " "
+    - "[center]&8&m                                                  "
+    - "[center]#009809&l✦ ANNOUNCEMENT ✦"
+    - " "
+    - "[center]{message}"
+    - " "
+    - "[center]&7Announced by &f{player}"
+    - "[center]&8&m                                                  "
+    - " "
+  title: "#009809&lANNOUNCEMENT!"
+  subtitle: "&7From &f{player}"
+
+# ---------------- /creadores ----------------
+creadores:
+  no-creators: "{prefix}&cThere are no creators configured yet."
+  already-chosen: "{prefix}&cYou already chose your creator and can't change it."
+  unavailable: "{prefix}&cThat creator is no longer available."
+  links-header: "{prefix}&7Channels of {creator_color}&l{creator}&7:"
+  links-line: "  &8» &f{platform}&7: &b{link}"
+  links-none: "{prefix}&7This creator hasn't added their channels yet."
+  links-hover: "&eClick to open"
+  chosen-message:
+    - " "
+    - "&a✔ &fYou chose {creator_color}&l{creator} &fas your creator."
+    - "&7You received your reward. Thanks for the support!"
+    - " "
+  chosen-title: "{creator_color}&l{creator}"
+  chosen-subtitle: "&fThanks for the support!"
+  votes-singular: "user chose"
+  votes-plural: "users chose"
+  # Daily reward
+  claim-success: "{prefix}&a✔ You claimed your daily reward for supporting {creator_color}&l{creator}&a."
+  claim-cooldown: "{prefix}&cYour next daily reward will be available in &f{time}&c."
+  claim-no-creator: "{prefix}&cFirst choose a creator with &f/creadores&c."
+  claim-no-reward: "{prefix}{creator_color}{creator} &cdoesn't have a daily reward."
+  claim-disabled: "{prefix}&cDaily rewards are disabled."
+  # Vote milestones
+  milestone-broadcast: "{prefix}&fThe creator {creator_color}&l{creator} &fhas reached &e{votes} votes&f. Their fans get a reward!"
+  milestone-reward:
+    - " "
+    - "&6&l★ &fMilestone of {creator_color}&l{creator} &funlocked: &e{votes} votes&f."
+    - "&7You received your reward!"
+    - " "
+  # Bonus while the creator is live
+  bonus-start: "{prefix}{creator_color}&l{creator} &fis live now. &aBonus x{multiplier} activated!"
+  bonus-end: "{prefix}&7The live stream of &f{creator} &7has ended. Your bonus was deactivated."
+  # Admin
+  reset-usage: "{prefix}&cUsage: &f/creadores reset <player>"
+  reset-done: "{prefix}&aThe choice of &f{player} &awas reset."
+  reset-none: "{prefix}&c{player} hasn't chosen a creator."
+  player-not-found: "{prefix}&cPlayer not found."
+  add-usage: "{prefix}&cUsage: &f/creadores add <id> <name>"
+  add-need-head: "{prefix}&cYou must hold a custom head in your hand."
+  add-exists: "{prefix}&cA creator with that id already exists."
+  add-done: "{prefix}&aCreator &f{creator} &aadded. Edit it in &fcreadores.yml&a."
+  remove-usage: "{prefix}&cUsage: &f/creadores remove <id>"
+  remove-not-found: "{prefix}&cNo creator exists with that id."
+  remove-done: "{prefix}&aCreator &f{creator} &aremoved. Their votes were released."
+  top-header:
+    - " "
+    - "&8&m                                    "
+    - "  #FFD000&lT#FFC400&lO#FFB800&lP #FFAC00&lC#FFA000&lR#FF9400&lE#FF8800&lA#FF7C00&lT#FF7000&lO#FF6400&lR#FF5800&lS"
+    - " "
+  top-line: "  &f{position}. {creator_color}{creator} &8» &f{votes} &7votes"
+  top-footer:
+    - "&8&m                                    "
+    - " "
+
+# ---------------- /media ----------------
+media:
+  vincular-usage: "{prefix}&cUsage: &f/media vincular <{platforms}> <username or link|quitar>"
+  vincular-invalid-platform: "{prefix}&cInvalid platform. Options: &f{platforms}"
+  vincular-invalid: "{prefix}&cThat username or link isn't valid for &f{platform}&c."
+  vincular-done: "{prefix}&aYou linked your &f{platform} &achannel: &b{link}"
+  vincular-removed: "{prefix}&aYou unlinked your &f{platform} &achannel."
+  vincular-not-linked: "{prefix}&cYou didn't have a &f{platform} &cchannel linked."
+  vincular-list-empty: "{prefix}&7You haven't linked any channel yet."
+  vincular-list-header: "{prefix}&7Your linked channels:"
+  vincular-list-line: "  &8» &f{platform}&7: &b{link}"
+  toggle-muted: "{prefix}&eAnnouncements &cmuted&e. You won't see streams, videos or announcements. Use &f/media toggle &eto see them again."
+  toggle-unmuted: "{prefix}&aAnnouncements enabled again."
+  history-empty: "{prefix}&7There is nothing in the history yet."
+  history-header:
+    - " "
+    - "&8&m                                                  "
+    - "  #FFD000&lH#FFAF00&lI#FF8F00&lS#FF6E00&lT#FF4D00&lO#FF2D00&lR#FF0C00&lY &7(page {page}/{pages} &8| &7{total} entries)"
+    - " "
+  history-line: "  &8[&7{time}&8] &e{type} &8» &f{player} &7{detail}"
+  history-footer:
+    - "&8&m                                                  "
+    - " "
+
+# ---------------- /media config ----------------
+config-menu:
+  title: "&8zSMedias » Settings"
+  cooldown-name: "&e&l/{type} cooldown"
+  cooldown-lore:
+    - "&7Current: &f{time}"
+    - " "
+    - "&eLeft click &7» &a+{step}"
+    - "&eRight click &7» &c-{step}"
+    - "&eShift &7» &fx5"
+  daily-name: "&6&lDaily rewards"
+  daily-lore:
+    - "&7Status: {state}"
+    - " "
+    - "&7Enables or disables /creadores claim"
+    - "&7and the claim button in the creators menu."
+    - " "
+    - "&eClick &7» toggle"
+  state-on: "&a&lENABLED"
+  state-off: "&c&lDISABLED"
+  platform-name-on: "&a&l{platform}"
+  platform-name-off: "&c&l{platform}"
+  platform-lore:
+    - "&7Command: &f/{type}"
+    - "&7Status: {state}"
+    - " "
+    - "&eClick &7» toggle"
+  platform-on: "&aEnabled"
+  platform-off: "&cDisabled"
+  close-name: "&c&lClose"
