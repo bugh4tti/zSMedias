@@ -34,6 +34,9 @@ public class CreadoresCommand implements CommandExecutor, TabCompleter {
                 case "top":
                     top(sender);
                     return true;
+                case "claim":
+                    claim(sender);
+                    return true;
                 case "add":
                     add(sender, args);
                     return true;
@@ -64,6 +67,22 @@ public class CreadoresCommand implements CommandExecutor, TabCompleter {
             return;
         }
         plugin.getCreadoresMenu().open(player);
+    }
+
+    private void claim(CommandSender sender) {
+        MessageManager msg = plugin.getMessages();
+
+        if (!(sender instanceof Player player)) {
+            msg.send(sender, "general.only-players");
+            return;
+        }
+        if (!player.hasPermission("zsmedias.creadores.claim")) {
+            msg.send(player, "general.no-permission");
+            return;
+        }
+
+        plugin.getRewards().claimDaily(player);
+        plugin.getCreadoresMenu().refreshOpen();
     }
 
     private void top(CommandSender sender) {
@@ -161,6 +180,7 @@ public class CreadoresCommand implements CommandExecutor, TabCompleter {
         plugin.getCreators().remove(creator.id());
 
         msg.send(sender, "creadores.remove-done", "{creator}", creator.name());
+        plugin.getLive().refreshAllBonuses();
         plugin.getCreadoresMenu().refreshOpen();
     }
 
@@ -172,7 +192,7 @@ public class CreadoresCommand implements CommandExecutor, TabCompleter {
             return;
         }
         if (args.length < 2) {
-            sender.sendMessage(Text.color("&cUso: &f/creadores reset <jugador>"));
+            msg.send(sender, "creadores.reset-usage");
             return;
         }
 
@@ -191,6 +211,11 @@ public class CreadoresCommand implements CommandExecutor, TabCompleter {
         }
 
         msg.send(sender, "creadores.reset-done", "{player}", name);
+
+        Player online = target.getPlayer();
+        if (online != null) {
+            plugin.getLive().refreshBonus(online);
+        }
         plugin.getCreadoresMenu().refreshOpen();
     }
 
@@ -201,6 +226,9 @@ public class CreadoresCommand implements CommandExecutor, TabCompleter {
         if (args.length == 1) {
             if (sender.hasPermission("zsmedias.creadores")) {
                 options.add("top");
+            }
+            if (sender.hasPermission("zsmedias.creadores.claim")) {
+                options.add("claim");
             }
             if (sender.hasPermission("zsmedias.admin")) {
                 options.add("add");
@@ -238,4 +266,4 @@ public class CreadoresCommand implements CommandExecutor, TabCompleter {
         }
         return result;
     }
-                                                        }
+}
