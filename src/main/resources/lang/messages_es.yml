@@ -1,0 +1,234 @@
+# =====================================================
+#  zSMedias - lang/messages_es.yml
+#  Soporta: &colores, &#RRGGBB y #RRGGBB (ej: #FDFF00&lM#FEFF2C&lE)
+#  [center] al inicio de una línea la centra en el chat.
+#  Si a otro idioma le falta una clave, se usa la de este archivo.
+# =====================================================
+
+prefix: "&8[#00C6FF&lzS#00B4F5&lMedias&8] &r"
+
+general:
+  no-permission: "{prefix}&cNo tienes permiso para hacer eso."
+  only-players: "{prefix}&cSolo los jugadores pueden usar este comando."
+  reload: "{prefix}&aConfiguración e idioma recargados correctamente."
+  cooldown: "{prefix}&cDebes esperar &f{time} &cpara volver a usar este comando."
+
+help:
+  - " "
+  - "&8&m                                                  "
+  - "  #00C6FF&lz#00B4F5&lS#00A2EB&lM#0090E1&le#007EDD&ld#006CD3&li#005AC9&la#0048BF&ls"
+  - " "
+  - "  &f/directo &7<plataforma> [link] &8- &7Anuncia un directo."
+  - "  &f/directo execute &7<plataforma> <nick> [link] &8- &7Anuncia por otro jugador."
+  - "  &f/video &7<plataforma> <link> &8- &7Anuncia un video."
+  - "  &f/anuncio &7<contenido> &8- &7Anuncio global."
+  - "  &f/creadores &8- &7Menú de creadores."
+  - "  &f/creadores claim &8- &7Recompensa diaria."
+  - "  &f/creadores top &8- &7Ranking de creadores."
+  - "  &f/media vincular &7[plataforma] [canal] &8- &7Vincula tu canal."
+  - "  &f/media toggle &8- &7Silencia o activa los anuncios."
+  - "  &f/media historial &7[página] &8- &7Historial (staff)."
+  - "  &f/media config &8- &7Configuración in-game (admin)."
+  - "  &f/media reload &8- &7Recarga la configuración."
+  - "&8&m                                                  "
+  - " "
+
+# ---------------- /directo ----------------
+directo:
+  usage: "{prefix}&cUso: &f/directo <{platforms}> [link]"
+  invalid-platform: "{prefix}&cPlataforma inválida. Opciones: &f{platforms}"
+  invalid-link: "{prefix}&cEse link no corresponde a &f{platform}&c."
+  no-channel: "{prefix}&cNo tienes un canal de &f{platform} &cvinculado. Usa &f/media vincular &co escribe el link al final del comando."
+  execute-usage: "{prefix}&cUso: &f/directo execute <{platforms}> <nick> [link]"
+  execute-no-channel: "{prefix}&c{player} no tiene un canal de &f{platform} &cvinculado. Escribe el link al final del comando."
+  execute-done: "{prefix}&aAnunciaste el directo de &f{player} &aen &f{platform}&a."
+  # {button} se reemplaza por un botón clickeable
+  lines:
+    - " "
+    - "[center]&8&m                                                  "
+    - "[center]&c&l● #FF3B3B&lD#FF4B3B&lI#FF5B3B&lR#FF6A3B&lE#FF7A3B&lC#FF8A3B&lT#FF9A3B&lO &8&l» {platform_color}&l{platform_upper}"
+    - " "
+    - "[center]&f&l{player} &7está en directo ✦"
+    - "[center]&7¡Pásate a apoyar!"
+    - " "
+    - "[center]{button}"
+    - "[center]&8&m                                                  "
+    - " "
+  # Recordatorios automáticos mientras dura la sesión de directo ({time} = hace cuánto empezó)
+  reminder:
+    lines:
+      - " "
+      - "[center]&8&m                                                  "
+      - "[center]&c&l● &f&l{player} &7sigue en directo en {platform_color}&l{platform} &8(&f{time}&8)"
+      - "[center]&7¡Todavía estás a tiempo de pasarte!"
+      - " "
+      - "[center]{button}"
+      - "[center]&8&m                                                  "
+      - " "
+  button:
+    text: "{platform_color}&l[ ▶ ENTRAR AL DIRECTO ]"
+    hover:
+      - "{platform_color}&l{platform}"
+      - "&7Canal de &f{player}"
+      - " "
+      - "&e¡Click para abrir el link!"
+  title: "#FF3B3B&l¡DIRECTO!"
+  subtitle: "&f{player} &7en {platform_color}{platform}"
+  bossbar: "&c&l● {platform_color}&l{player} &festá en directo en {platform_color}&l{platform}"
+
+# ---------------- /video ----------------
+video:
+  usage: "{prefix}&cUso: &f/video <{platforms}> <link>"
+  invalid-platform: "{prefix}&cPlataforma inválida. Opciones: &f{platforms}"
+  invalid-link: "{prefix}&cEse link no corresponde a &f{platform}&c."
+  lines:
+    - " "
+    - "[center]&8&m                                                  "
+    - "[center]&e&l★ #FFD000&lN#FFC400&lU#FFB800&lE#FFAC00&lV#FFA000&lO #FF9400&lV#FF8800&lI#FF7C00&lD#FF7000&lE#FF6400&lO &8&l» {platform_color}&l{platform_upper}"
+    - " "
+    - "[center]&f&l{player} &7subió un nuevo video ✦"
+    - "[center]&7¡Ve a verlo y deja tu like!"
+    - " "
+    - "[center]{button}"
+    - "[center]&8&m                                                  "
+    - " "
+  button:
+    text: "{platform_color}&l[ ▶ VER VIDEO ]"
+    hover:
+      - "{platform_color}&l{platform}"
+      - "&7Video de &f{player}"
+      - " "
+      - "&e¡Click para abrir el link!"
+  title: "#FFD000&l¡NUEVO VIDEO!"
+  subtitle: "&f{player} &7en {platform_color}{platform}"
+  bossbar: "&e&l★ {platform_color}&l{player} &fsubió un nuevo video en {platform_color}&l{platform}"
+
+# ---------------- /anuncio ----------------
+anuncio:
+  usage: "{prefix}&cUso: &f/anuncio <contenido>"
+  too-long: "{prefix}&cTu anuncio es muy largo. Máximo: &f{max} &ccaracteres."
+  blocked-word: "{prefix}&cTu anuncio contiene palabras no permitidas."
+  blocked-link: "{prefix}&cNo puedes poner links, dominios ni IPs en tu anuncio."
+  lines:
+    - " "
+    - "[center]&8&m                                                  "
+    - "[center]#009809&l✦ ANUNCIO ✦"
+    - " "
+    - "[center]{message}"
+    - " "
+    - "[center]&7Anunciado por &f{player}"
+    - "[center]&8&m                                                  "
+    - " "
+  title: "#009809&l¡ANUNCIO!"
+  subtitle: "&7De &f{player}"
+
+# ---------------- /creadores ----------------
+creadores:
+  no-creators: "{prefix}&cTodavía no hay creadores configurados."
+  already-chosen: "{prefix}&cYa elegiste a tu creador y no puedes cambiarlo."
+  unavailable: "{prefix}&cEse creador ya no está disponible."
+  links-header: "{prefix}&7Canales de {creator_color}&l{creator}&7:"
+  links-line: "  &8» &f{platform}&7: &b{link}"
+  links-none: "{prefix}&7Este creador todavía no agregó sus canales."
+  links-hover: "&eClick para abrir"
+  chosen-message:
+    - " "
+    - "&a✔ &fElegiste a {creator_color}&l{creator} &fcomo tu creador."
+    - "&7Recibiste tu recompensa. ¡Gracias por apoyar!"
+    - " "
+  chosen-title: "{creator_color}&l{creator}"
+  chosen-subtitle: "&f¡Gracias por apoyar!"
+  votes-singular: "usuario eligió"
+  votes-plural: "usuarios eligieron"
+  # Recompensa diaria
+  claim-success: "{prefix}&a✔ Reclamaste tu recompensa diaria por apoyar a {creator_color}&l{creator}&a."
+  claim-cooldown: "{prefix}&cTu próxima recompensa diaria estará disponible en &f{time}&c."
+  claim-no-creator: "{prefix}&cPrimero elige un creador con &f/creadores&c."
+  claim-no-reward: "{prefix}{creator_color}{creator} &cno tiene recompensa diaria."
+  claim-disabled: "{prefix}&cLas recompensas diarias están desactivadas."
+  # Hitos de votos
+  milestone-broadcast: "{prefix}&fEl creador {creator_color}&l{creator} &fllegó a &e{votes} votos&f. ¡Sus fans reciben una recompensa!"
+  milestone-reward:
+    - " "
+    - "&6&l★ &fHito de {creator_color}&l{creator} &fdesbloqueado: &e{votes} votos&f."
+    - "&7¡Recibiste tu recompensa!"
+    - " "
+  # Bonus mientras el creador está en directo
+  bonus-start: "{prefix}{creator_color}&l{creator} &festá en directo. &a¡Bonus x{multiplier} activado!"
+  bonus-end: "{prefix}&7El directo de &f{creator} &7terminó. Tu bonus se desactivó."
+  # Admin
+  reset-usage: "{prefix}&cUso: &f/creadores reset <jugador>"
+  reset-done: "{prefix}&aSe reinició la elección de &f{player}&a."
+  reset-none: "{prefix}&c{player} no tiene un creador elegido."
+  player-not-found: "{prefix}&cJugador no encontrado."
+  add-usage: "{prefix}&cUso: &f/creadores add <id> <nombre>"
+  add-need-head: "{prefix}&cDebes tener una cabeza custom en la mano."
+  add-exists: "{prefix}&cYa existe un creador con ese id."
+  add-done: "{prefix}&aCreador &f{creator} &aagregado. Edítalo en &fcreadores.yml&a."
+  remove-usage: "{prefix}&cUso: &f/creadores remove <id>"
+  remove-not-found: "{prefix}&cNo existe un creador con ese id."
+  remove-done: "{prefix}&aCreador &f{creator} &aeliminado. Sus votos fueron liberados."
+  top-header:
+    - " "
+    - "&8&m                                    "
+    - "  #FFD000&lT#FFC400&lO#FFB800&lP #FFAC00&lC#FFA000&lR#FF9400&lE#FF8800&lA#FF7C00&lD#FF7000&lO#FF6400&lR#FF5800&lE#FF4C00&lS"
+    - " "
+  top-line: "  &f{position}. {creator_color}{creator} &8» &f{votes} &7votos"
+  top-footer:
+    - "&8&m                                    "
+    - " "
+
+# ---------------- /media ----------------
+media:
+  vincular-usage: "{prefix}&cUso: &f/media vincular <{platforms}> <usuario o link|quitar>"
+  vincular-invalid-platform: "{prefix}&cPlataforma inválida. Opciones: &f{platforms}"
+  vincular-invalid: "{prefix}&cEse usuario o link no es válido para &f{platform}&c."
+  vincular-done: "{prefix}&aVinculaste tu canal de &f{platform}&a: &b{link}"
+  vincular-removed: "{prefix}&aDesvinculaste tu canal de &f{platform}&a."
+  vincular-not-linked: "{prefix}&cNo tenías un canal de &f{platform} &cvinculado."
+  vincular-list-empty: "{prefix}&7Todavía no vinculaste ningún canal."
+  vincular-list-header: "{prefix}&7Tus canales vinculados:"
+  vincular-list-line: "  &8» &f{platform}&7: &b{link}"
+  toggle-muted: "{prefix}&eAnuncios &csilenciados&e. Ya no verás directos, videos ni anuncios. Usa &f/media toggle &epara volver a verlos."
+  toggle-unmuted: "{prefix}&aAnuncios activados de nuevo."
+  history-empty: "{prefix}&7Todavía no hay nada en el historial."
+  history-header:
+    - " "
+    - "&8&m                                                  "
+    - "  #FFD000&lH#FFB800&lI#FF9F00&lS#FF8700&lT#FF6E00&lO#FF5600&lR#FF3D00&lI#FF2500&lA#FF0C00&lL &7(página {page}/{pages} &8| &7{total} registros)"
+    - " "
+  history-line: "  &8[&7{time}&8] &e{type} &8» &f{player} &7{detail}"
+  history-footer:
+    - "&8&m                                                  "
+    - " "
+
+# ---------------- /media config ----------------
+config-menu:
+  title: "&8zSMedias » Configuración"
+  cooldown-name: "&e&lCooldown de /{type}"
+  cooldown-lore:
+    - "&7Actual: &f{time}"
+    - " "
+    - "&eClick izquierdo &7» &a+{step}"
+    - "&eClick derecho &7» &c-{step}"
+    - "&eShift &7» &fx5"
+  daily-name: "&6&lRecompensas diarias"
+  daily-lore:
+    - "&7Estado: {state}"
+    - " "
+    - "&7Activa o desactiva /creadores claim"
+    - "&7y el botón del menú de creadores."
+    - " "
+    - "&eClick &7» alternar"
+  state-on: "&a&lACTIVADAS"
+  state-off: "&c&lDESACTIVADAS"
+  platform-name-on: "&a&l{platform}"
+  platform-name-off: "&c&l{platform}"
+  platform-lore:
+    - "&7Comando: &f/{type}"
+    - "&7Estado: {state}"
+    - " "
+    - "&eClick &7» alternar"
+  platform-on: "&aHabilitada"
+  platform-off: "&cDeshabilitada"
+  close-name: "&c&lCerrar"
