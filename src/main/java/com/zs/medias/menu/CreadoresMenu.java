@@ -3,6 +3,7 @@ package com.zs.medias.menu;
 import com.zs.medias.ZSMedias;
 import com.zs.medias.managers.Creator;
 import com.zs.medias.managers.MessageManager;
+import com.zs.medias.util.CommandUtil;
 import com.zs.medias.util.ItemUtil;
 import com.zs.medias.util.Text;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -41,6 +42,7 @@ public class CreadoresMenu implements Listener {
         private final Map<Integer, String> slots = new HashMap<>();
         private Inventory inventory;
         private int closeSlot = -1;
+        private int claimSlot = -1;
         private int confirmSlot = -1;
         private int cancelSlot = -1;
 
@@ -121,10 +123,20 @@ public class CreadoresMenu implements Listener {
             }
         }
 
+        holder.claimSlot = -1;
+        if (yml.getBoolean("menu.claim-button.enabled", true)) {
+            int claimSlot = yml.getInt("menu.claim-button.slot", size - 4);
+            if (claimSlot >= 0 && claimSlot < size && claimSlot != holder.closeSlot) {
+                holder.claimSlot = claimSlot;
+                inventory.setItem(claimSlot, buildClaimButton(player));
+            }
+        }
+
         String chosen = plugin.getData().getChoice(player.getUniqueId());
         for (Creator creator : plugin.getCreators().getAll()) {
             int slot = creator.slot();
-            if (slot < 0 || slot >= size || slot == holder.closeSlot || holder.slots.containsKey(slot)) {
+            if (slot < 0 || slot >= size || slot == holder.closeSlot || slot == holder.claimSlot
+                    || holder.slots.containsKey(slot)) {
                 slot = firstFreeSlot(holder, size);
                 if (slot == -1) {
                     continue;
@@ -141,7 +153,7 @@ public class CreadoresMenu implements Listener {
             if (column == 0 || column == 8) {
                 continue;
             }
-            if (i == holder.closeSlot || holder.slots.containsKey(i)) {
+            if (i == holder.closeSlot || i == holder.claimSlot || holder.slots.containsKey(i)) {
                 continue;
             }
             return i;
@@ -172,6 +184,39 @@ public class CreadoresMenu implements Listener {
             ItemUtil.glow(item);
         }
         return item;
+    }
+
+    private ItemStack buildClaimButton(Player player) {
+        FileConfiguration yml = plugin.getCreators().getYml();
+
+        Creator creator = plugin.getCreators().get(plugin.getData().getChoice(player.getUniqueId()));
+
+        String statusKey;
+        long remaining = 0;
+        if (creator == null) {
+            statusKey = "no-creator";
+        } else if (creator.daily().isEmpty()) {
+            statusKey = "no-reward";
+        } else {
+            remaining = plugin.getRewards().dailyRemaining(player);
+            statusKey = remaining > 0 ? "cooldown" : "ready";
+        }
+
+        String time = Text.formatTime(remaining);
+        String status = Text.replace(yml.getString("menu.claim-button.status." + statusKey, ""), "{time}", time);
+
+        String[] pairs = {
+                "{status}", status,
+                "{time}", time,
+                "{creator}", creator == null ? "" : creator.name(),
+                "{creator_color}", creator == null ? "" : creator.color()
+        };
+
+        return ItemUtil.named(
+                ItemUtil.material(yml.getString("menu.claim-button.material"), Material.CHEST),
+                Text.replace(yml.getString("menu.claim-button.name", "&6Recompensa diaria"), pairs),
+                Text.replace(yml.getStringList("menu.claim-button.lore"), pairs)
+        );
     }
 
     /** Actualiza en vivo los votos de todos los que tienen el menú abierto. */
@@ -285,6 +330,14 @@ public class CreadoresMenu implements Listener {
             return;
         }
 
+        if (slot == holder.claimSlot) {
+            later(() -> {
+                plugin.getRewards().claimDaily(player);
+                refreshOpen();
+            });
+            return;
+        }
+
         String id = holder.slots.get(slot);
         if (id == null) {
             return;
@@ -377,15 +430,7 @@ public class CreadoresMenu implements Listener {
 
         // Las recompensas solo se dan la primera vez (cambiar de creador no las repite)
         if (previous == null) {
-            for (String command : creator.rewards()) {
-                String cmd = Text.replace(command, pairs).trim();
-                if (cmd.startsWith("/")) {
-                    cmd = cmd.substring(1);
-                }
-                if (!cmd.isEmpty()) {
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
-                }
-            }
+            CommandUtil.run(creator.rewards(), pairs);
         }
 
         List<String> lines = creator.message().isEmpty() ? msg.rawList("creadores.chosen-message") : creator.message();
@@ -397,6 +442,10 @@ public class CreadoresMenu implements Listener {
         String subtitle = creator.subtitle() != null ? creator.subtitle() : msg.raw("creadores.chosen-subtitle");
         plugin.getAnnouncer().sendTitle(player, "creadores", Text.replace(title, pairs), Text.replace(subtitle, pairs));
         plugin.getAnnouncer().playSound(player, "creadores-elegir");
+
+        // Un voto nuevo puede desbloquear un hito, y el bonus depende de si su creador está en directo
+        plugin.getRewards().checkMilestones(creator);
+        plugin.getLive().refreshBonus(player);
 
         refreshOpen();
     }
@@ -441,7 +490,7 @@ public class CreadoresMenu implements Listener {
                 component.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, link));
                 component.setHoverEvent(new HoverEvent(
                         HoverEvent.Action.SHOW_TEXT,
-                        new net.md_5.bungee.api.chat.hover.content.Text(Text.color("&eClick para abrir"))
+                        new net.md_5.bungee.api.chat.hover.content.Text(Text.color(msg.raw("creadores.links-hover")))
                 ));
             }
             player.spigot().sendMessage(components);
@@ -480,4 +529,4 @@ public class CreadoresMenu implements Listener {
     private int clamp(int value, int min, int max) {
         return Math.max(min, Math.min(max, value));
     }
-  }
+                    }
