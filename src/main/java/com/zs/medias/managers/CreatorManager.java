@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -61,6 +62,35 @@ public class CreatorManager {
                 }
             }
 
+            List<Milestone> milestones = new ArrayList<>();
+            ConfigurationSection milestoneSection = section.getConfigurationSection("milestones");
+            if (milestoneSection != null) {
+                for (String votesKey : milestoneSection.getKeys(false)) {
+                    int votes;
+                    try {
+                        votes = Integer.parseInt(votesKey.trim());
+                    } catch (NumberFormatException ex) {
+                        plugin.getLogger().warning("Hito inválido en creadores.yml (" + key + "): " + votesKey);
+                        continue;
+                    }
+                    if (votes <= 0) {
+                        continue;
+                    }
+
+                    ConfigurationSection hito = milestoneSection.getConfigurationSection(votesKey);
+                    if (hito == null) {
+                        continue;
+                    }
+
+                    milestones.add(new Milestone(
+                            votes,
+                            hito.getStringList("rewards"),
+                            hito.getStringList("message")
+                    ));
+                }
+                milestones.sort(Comparator.comparingInt(Milestone::votes));
+            }
+
             creators.put(id, new Creator(
                     id,
                     section.getString("name", key),
@@ -73,7 +103,11 @@ public class CreatorManager {
                     section.getStringList("rewards"),
                     section.getStringList("message"),
                     section.getString("title"),
-                    section.getString("subtitle")
+                    section.getString("subtitle"),
+                    section.getString("player", ""),
+                    section.getString("tag", ""),
+                    section.getStringList("daily"),
+                    milestones
             ));
         }
     }
@@ -115,11 +149,14 @@ public class CreatorManager {
                 "{status}",
                 "&eClick derecho &7para ver sus canales"
         )));
+        yml.set(path + ".player", "");
+        yml.set(path + ".tag", "");
         yml.set(path + ".links.youtube", "");
         yml.set(path + ".links.twitch", "");
         yml.set(path + ".links.tiktok", "");
         yml.set(path + ".links.kick", "");
         yml.set(path + ".rewards", new ArrayList<String>());
+        yml.set(path + ".daily", new ArrayList<String>());
 
         save();
         load();
@@ -153,6 +190,7 @@ public class CreatorManager {
     private int nextFreeSlot() {
         int rows = Math.max(1, Math.min(6, yml.getInt("menu.rows", 4)));
         int closeSlot = yml.getInt("menu.close-button.slot", -1);
+        int claimSlot = yml.getInt("menu.claim-button.slot", -1);
 
         Set<Integer> used = new HashSet<>();
         for (Creator creator : creators.values()) {
@@ -161,7 +199,7 @@ public class CreatorManager {
 
         for (int slot = 10; slot < rows * 9; slot++) {
             int column = slot % 9;
-            if (column == 0 || column == 8 || slot == closeSlot) {
+            if (column == 0 || column == 8 || slot == closeSlot || slot == claimSlot) {
                 continue;
             }
             if (!used.contains(slot)) {
