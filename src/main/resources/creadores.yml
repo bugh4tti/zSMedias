@@ -32,7 +32,9 @@ menu:
     name: "&c&lCerrar"
     lore:
       - "&7Click para cerrar el menú."
-  # Recompensa diaria (también con /creadores claim). El cooldown se edita en config.yml
+  # Recompensa diaria (también con /creadores claim).
+  # El cooldown y el interruptor general (creadores.daily-enabled) se editan en config.yml
+  # o desde /media config. Si el interruptor está en false, este botón se oculta solo.
   claim-button:
     enabled: true
     slot: 32
